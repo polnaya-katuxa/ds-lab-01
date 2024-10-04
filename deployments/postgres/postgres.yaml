@@ -1,0 +1,19 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: person-service-db
+  namespace: eokarpova
+spec:
+  teamId: "acid"
+  volume:
+    size: 1Gi
+    storageClass: csi-s3
+  numberOfInstances: 1
+  users:
+    program:
+    - superuser
+    - createdb
+  databases:
+    persons: program  # dbname: owner
+  postgresql:
+    version: "16"

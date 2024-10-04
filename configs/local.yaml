@@ -1,0 +1,8 @@
+Postgres:
+  Host: 127.0.0.1
+  Port: 5435
+  User: program
+  Password: test
+  DBName: persons
+Port: 8080
+LogLevel: debug
