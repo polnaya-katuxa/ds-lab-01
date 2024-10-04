@@ -103,13 +103,14 @@ jobs:
         run: kubectl get po -A
 
       - name: Helm install
-        run: helm upgrade --install --create-namespace --namespace eokarpova \
-          --set 'image.tag=${{ github.sha }}' \
-          --set 'config.postgres.host=${{ secrets.DB_HOST }}' \
-          --set 'config.postgres.port=${{ secrets.DB_PORT }}' \
+        run: >
+          helm upgrade --install --create-namespace --namespace eokarpova
+          --set 'image.tag=${{ github.sha }}'
+          --set 'config.postgres.host=${{ secrets.DB_HOST }}'
+          --set 'config.postgres.port=${{ secrets.DB_PORT }}'
           --set 'config.postgres.user=${{ secrets.DB_USER }}' \
-          --set 'config.postgres.password=${{ secrets.DB_PASSWORD }}' \
-          --set 'config.postgres.db=${{ secrets.DB_NAME }}' \
+          --set 'config.postgres.password=${{ secrets.DB_PASSWORD }}'
+          --set 'config.postgres.db=${{ secrets.DB_NAME }}'
           person-service deployments/helm --dry-run
 
   autograding:
