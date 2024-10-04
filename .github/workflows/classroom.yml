@@ -53,6 +53,7 @@ jobs:
 
   build-image:
     name: Build and push Docker image
+    needs: ["build", "test"]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -81,6 +82,7 @@ jobs:
 
   migrate:
     name: Migrate
+    needs: build-image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -114,6 +116,7 @@ jobs:
 
   deploy:
     name: Deploy
+    needs: migrate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -144,7 +147,7 @@ jobs:
           --set 'config.postgres.user=${{ secrets.DB_USER }}'
           --set 'config.postgres.password=${{ secrets.DB_PASSWORD }}'
           --set 'config.postgres.db=${{ secrets.DB_NAME }}'
-          person-service deployments/helm --dry-run
+          person-service deployments/helm
 
   autograding:
     name: Autograding
