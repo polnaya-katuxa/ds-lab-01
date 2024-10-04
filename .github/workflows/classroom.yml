@@ -8,6 +8,50 @@ on:
       - master
 jobs:
   build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.4"
+
+      - name: Install dependencies
+        run: go mod download all
+
+      - name: Tidy
+        run: go mod tidy
+
+      - name: Build service
+        run: go build ./cmd/app/main.go
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.4"
+
+      - name: Install dependencies
+        run: go mod download all
+
+      - name: Tidy
+        run: go mod tidy
+
+      - name: Build service
+        run: go test -v -cover ./...
+
+  autograding:
     name: Autograding
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +79,6 @@ jobs:
           google_token: ${{secrets.GOOGLE_API_KEY}}
           sheet_id: "1xkgjUX6Qmk7rdJG-QPOToav-HWWtthJjnShIKnw3oIY"
           homework_number: 1
-          user_column: 'D'
-          column_offset: 'F'
+          user_column: "D"
+          column_offset: "F"
           mark: "'+"
