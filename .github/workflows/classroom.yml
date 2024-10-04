@@ -64,23 +64,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.22.4"
-
-      - name: Install dependencies
-        run: go mod download all
-
-      - name: Tidy
-        run: go mod tidy
-
-      - name: Run tests
-        run: go test -v -cover ./...
-
-      - name: Check out the repo
-        uses: actions/checkout@v4
-
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
@@ -102,13 +85,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
 
       - name: Echo pushed image data
         run: echo ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
