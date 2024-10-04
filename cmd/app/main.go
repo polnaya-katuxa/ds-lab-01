@@ -146,7 +146,7 @@ type db struct {
 }
 
 func (d *db) toDSN() string {
-	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", d.Host,
+	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", d.Host,
 		d.Port, d.User, d.Password, d.DBName)
 }
 
