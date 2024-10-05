@@ -147,7 +147,7 @@ jobs:
           person-service deployments/helm
 
       - name: Wait before all pods are ready
-        run: kubectl wait -n eokarpova -l app.kubernetes.io/name=person-service pod --for=condition=Ready --timeout 1m
+        run: kubectl wait -n eokarpova -l app.kubernetes.io/name=person-service pod --for=condition=Ready --timeout 3m
 
   autograding:
     name: Autograding

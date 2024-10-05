@@ -20,6 +20,15 @@ func toPerson(req openapi.PersonRequest) models.Person {
 	}
 }
 
+func toPersonPatch(req openapi.PersonRequest) models.PersonPatch {
+	return models.PersonPatch{
+		Name:    req.Name,
+		Age:     int(req.Age),
+		Address: req.Address,
+		Work:    req.Work,
+	}
+}
+
 func fromPersons(p []models.Person) []openapi.PersonResponse {
 	resp := make([]openapi.PersonResponse, 0, len(p))
 	for _, v := range p {

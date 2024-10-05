@@ -72,10 +72,10 @@ func (s *Server) EditPerson(c echo.Context, id int32) error {
 		return processError(c, err, "cannot unmarshal request body")
 	}
 
-	person := toPerson(req)
-	person.ID = int(id)
+	patch := toPersonPatch(req)
+	patch.ID = int(id)
 
-	updated, err := s.personLogic.Edit(c.Request().Context(), person)
+	updated, err := s.personLogic.Edit(c.Request().Context(), patch)
 	if err != nil {
 		return processError(c, err, "cannot edit user")
 	}
@@ -87,6 +87,6 @@ type personLogic interface {
 	Create(context.Context, models.Person) (*models.Person, error)
 	Get(context.Context, int) (*models.Person, error)
 	Delete(context.Context, int) error
-	Edit(context.Context, models.Person) (*models.Person, error)
+	Edit(context.Context, models.PersonPatch) (*models.Person, error)
 	GetAll(context.Context) ([]models.Person, error)
 }

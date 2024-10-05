@@ -66,16 +66,24 @@ func (p *PersonLogic) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (p *PersonLogic) Edit(ctx context.Context, person models.Person) (*models.Person, error) {
-	p.logger.Debugw("editing person", "id", person.ID)
+func (p *PersonLogic) Edit(ctx context.Context, patch models.PersonPatch) (*models.Person, error) {
+	p.logger.Debugw("editing person", "id", patch.ID)
 
-	err := person.Validate()
+	person, err := p.repository.Get(ctx, patch.ID)
+	if err != nil {
+		p.logger.Errorw("cannot find person", "error", err, "id", person.ID)
+		return nil, fmt.Errorf("find person in repository: %w", err)
+	}
+
+	person.Merge(patch)
+
+	err = person.Validate()
 	if err != nil {
 		p.logger.Warnw("invalid person", "error", err, "id", person.ID)
 		return nil, fmt.Errorf("validate person: %w", err)
 	}
 
-	err = p.repository.Edit(ctx, person)
+	err = p.repository.Edit(ctx, *person)
 	if err != nil {
 		p.logger.Errorw("cannot edit person", "error", err, "id", person.ID)
 		return nil, fmt.Errorf("edit person in repository: %w", err)
@@ -83,7 +91,7 @@ func (p *PersonLogic) Edit(ctx context.Context, person models.Person) (*models.P
 
 	p.logger.Debugw("edited person", "id", person.ID)
 
-	return &person, nil
+	return person, nil
 }
 
 func (p *PersonLogic) GetAll(ctx context.Context) ([]models.Person, error) {

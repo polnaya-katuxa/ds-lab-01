@@ -15,7 +15,7 @@ var (
 type Person struct {
 	ID      int     `validate:"omitempty,gte=0"`
 	Name    string  `validate:"required"`
-	Age     int     `validate:"gte=0"`
+	Age     int     `validate:"required,gte=0"`
 	Address string  `validate:"required"`
 	Work    *string `validate:"omitempty,gt=0"`
 }
@@ -27,4 +27,30 @@ func (p *Person) Validate() error {
 	}
 
 	return nil
+}
+
+type PersonPatch struct {
+	ID      int
+	Name    string
+	Age     int
+	Address string
+	Work    *string
+}
+
+func (p *Person) Merge(patch PersonPatch) {
+	if patch.Name != "" {
+		p.Name = patch.Name
+	}
+
+	if patch.Address != "" {
+		p.Address = patch.Address
+	}
+
+	if patch.Age != 0 {
+		p.Age = patch.Age
+	}
+
+	if patch.Work != nil {
+		p.Work = patch.Work
+	}
 }
