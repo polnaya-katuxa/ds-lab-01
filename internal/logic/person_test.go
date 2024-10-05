@@ -145,6 +145,19 @@ func TestPersonLogic_Edit(t *testing.T) {
 	t.Run("edited person", func(t *testing.T) {
 		ctx := context.Background()
 
+		patch := models.PersonPatch{
+			ID:      1,
+			Name: "Vasya",
+		}
+
+		person := models.Person{
+			ID:      1,
+			Name:    "Petya",
+			Age:     18,
+			Address: "Moscow",
+			Work:    ptr.String("BMSTU"),
+		}
+
 		personToEdit := models.Person{
 			ID:      1,
 			Name:    "Vasya",
@@ -162,35 +175,55 @@ func TestPersonLogic_Edit(t *testing.T) {
 		}
 
 		repository := mocks.NewPersonRepository(t)
+		repository.EXPECT().Get(ctx, patch.ID).Return(&person, nil)
 		repository.EXPECT().Edit(ctx, personToEdit).Return(nil)
 
 		p := New(repository, zap.NewNop().Sugar())
-		got, err := p.Edit(ctx, personToEdit)
+		got, err := p.Edit(ctx, patch)
 		require.NoError(t, err)
 		assert.Equal(t, want, got)
 	})
 
-	t.Run("invalid person", func(t *testing.T) {
+	t.Run("get person error", func(t *testing.T) {
 		ctx := context.Background()
 
-		personToEdit := models.Person{
+		patch := models.PersonPatch{
 			ID:      1,
-			Name:    "",
+			Name: "Vasya",
+		}
+
+		person := models.Person{
+			ID:      1,
+			Name:    "Petya",
 			Age:     18,
 			Address: "Moscow",
 			Work:    ptr.String("BMSTU"),
 		}
 
 		repository := mocks.NewPersonRepository(t)
+		repository.EXPECT().Get(ctx, patch.ID).Return(&person, errors.New("error"))
 
 		p := New(repository, zap.NewNop().Sugar())
-		got, err := p.Edit(ctx, personToEdit)
+		got, err := p.Edit(ctx, patch)
 		require.Error(t, err)
-		require.Nil(t, got)
+		assert.Nil(t, got)
 	})
 
-	t.Run("repository error", func(t *testing.T) {
+	t.Run("update person error", func(t *testing.T) {
 		ctx := context.Background()
+
+		patch := models.PersonPatch{
+			ID:      1,
+			Name: "Vasya",
+		}
+
+		person := models.Person{
+			ID:      1,
+			Name:    "Petya",
+			Age:     18,
+			Address: "Moscow",
+			Work:    ptr.String("BMSTU"),
+		}
 
 		personToEdit := models.Person{
 			ID:      1,
@@ -201,12 +234,38 @@ func TestPersonLogic_Edit(t *testing.T) {
 		}
 
 		repository := mocks.NewPersonRepository(t)
+		repository.EXPECT().Get(ctx, patch.ID).Return(&person, nil)
 		repository.EXPECT().Edit(ctx, personToEdit).Return(errors.New("error"))
 
 		p := New(repository, zap.NewNop().Sugar())
-		got, err := p.Edit(ctx, personToEdit)
+		got, err := p.Edit(ctx, patch)
 		require.Error(t, err)
-		require.Nil(t, got)
+		assert.Nil(t, got)
+	})
+
+	t.Run("invalid person", func(t *testing.T) {
+		ctx := context.Background()
+
+		patch := models.PersonPatch{
+			ID:      1,
+			Age: -10,
+		}
+
+		person := models.Person{
+			ID:      1,
+			Name:    "Petya",
+			Age:     18,
+			Address: "Moscow",
+			Work:    ptr.String("BMSTU"),
+		}
+
+		repository := mocks.NewPersonRepository(t)
+		repository.EXPECT().Get(ctx, patch.ID).Return(&person, nil)
+
+		p := New(repository, zap.NewNop().Sugar())
+		got, err := p.Edit(ctx, patch)
+		require.Error(t, err)
+		assert.Nil(t, got)
 	})
 }
 
