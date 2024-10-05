@@ -71,7 +71,7 @@ func (p *PersonLogic) Edit(ctx context.Context, patch models.PersonPatch) (*mode
 
 	person, err := p.repository.Get(ctx, patch.ID)
 	if err != nil {
-		p.logger.Errorw("cannot find person", "error", err, "id", person.ID)
+		p.logger.Errorw("cannot find person", "error", err, "id", patch.ID)
 		return nil, fmt.Errorf("find person in repository: %w", err)
 	}
 
