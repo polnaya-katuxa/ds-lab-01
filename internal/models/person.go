@@ -15,7 +15,7 @@ var (
 type Person struct {
 	ID      int     `validate:"omitempty,gte=0"`
 	Name    string  `validate:"required"`
-	Age     int     `validate:"required,gte=0"`
+	Age     int     `validate:"gte=0"`
 	Address string  `validate:"required"`
 	Work    *string `validate:"omitempty,gt=0"`
 }
